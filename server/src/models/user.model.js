@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		role: {
+			type: String,
+			enum: ["Admin", "User"],
+			default: "User",
+		},
 		refreshToken: {
 			type: String,
 		},
@@ -38,8 +43,8 @@ userSchema.methods.generateAccessToken(function () {
 			email: this.email,
 		},
 		conf.accessToken,
-        { expiresIn: conf.accessTokenExpiry }
-	)
+		{ expiresIn: conf.accessTokenExpiry }
+	);
 });
 
 userSchema.methods.generateRefreshToken(function () {
@@ -50,11 +55,10 @@ userSchema.methods.generateRefreshToken(function () {
 			email: this.email,
 		},
 		conf.refreshToken,
-        { expiresIn: conf.refreshTokenExpiry }
-	)
+		{ expiresIn: conf.refreshTokenExpiry }
+	);
 });
-
 
 const User = mongoose.model("User", userSchema);
 
-export default User
+export default User;

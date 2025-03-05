@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
-import { conf } from "./index";
+import { conf } from "./index.js";
 
 const mongoDB = conf.dbUri;
 
-const connectDb = async () => {
+export const connectDb = async () => {
 	try {
 		const connect = await mongoose.connect(mongoDB);
-        console.log(connect.connection.host)
+        console.log(`Mongodb connected !!! DB Host: ${connect.connection.host}`);
 	} catch (error) {
 		console.log("Mongodb connection :: Error :: ", error);
 	}
