@@ -6,10 +6,9 @@ class UserAuthentication {
 	getTokens = asyncHandler(async (userId) => {
 		const user = await User.findById(userId);
 		check(!user, 404, "User not found");
-		const accessToken = await user.generateAccessToken();
-		const refreshToken = await user.generateRefreshToken();
+		const accessToken = user.generateAccessToken();
+		const refreshToken = user.generateRefreshToken();
 
-	
 		user.refreshToken = refreshToken;
 		await user.save({ validateBeforeSave: false });
 
@@ -24,7 +23,7 @@ class UserAuthentication {
 
 		check(
 			[name, email, password].some((field) => {
-				field?.trim == "";
+				field?.trim() == "";
 			}),
 			400,
 			"All fields are required"
@@ -62,11 +61,10 @@ class UserAuthentication {
 
 		check(!isPasswordCorrect, 400, "Password Not valid");
 
-		const loggedInUser = User.findById(user._id).select(
+		const loggedInUser = await User.findById(user._id).select(
 			" -password -refreshToken "
 		);
-		const { accessToken, refreshToken } = this.getTokens(user._id);
-		console.log("---------=-", accessToken, refreshToken);
+		const { accessToken, refreshToken } = await this.getTokens(user._id);
 		return { accessToken, refreshToken, loggedInUser };
 	});
 }
