@@ -1,9 +1,15 @@
 import app from "./app.js";
-import "dotenv/config";
 import { connectDb } from "./conf/db.js";
+import { conf } from "./conf/index.js";
 
-connectDb().then(() => {
-	app.listen(8000, () => {
+const PORT = conf.port
+
+connectDb()
+.then(() => {
+	app.listen(PORT, () => {
 		console.log("Server started on http://localhost:8000");
 	});
-});
+})
+.catch((err)=>{
+	console.log(err)
+})

@@ -1,10 +1,15 @@
-import express from "express"
+import express from "express";
+import cookieParser from "cookie-parser";
 
-const PORT = 8000;
 const app = express();
 
-app.get('/', (req, res)=>{
-    res.send("MESSAGE FROM SERVER")
-})
+//Middlewares
+app.use(express.json({ limit: "16kb" }));
+app.use(cookieParser());
 
-export default app
+//Routes
+import userRoute from "./routes/user.route.js";
+
+app.use("/api/v1/user", userRoute);
+
+export default app;

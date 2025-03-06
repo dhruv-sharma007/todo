@@ -1,3 +1,7 @@
+import dotenv from "dotenv"
+
+dotenv.config()
+
 export const conf = {
     accessToken: process.env.ACCESS_TOKEN,
     accessTokenExpiry: process.env.acessRokenEXPIRY,
