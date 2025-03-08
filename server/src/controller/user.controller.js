@@ -34,11 +34,16 @@ class UserControl {
 			.json(
 				new ApiResponse(
 					200,
-					"",
+					{ user:loggedInUser},
 					"User logged in successfully"
 				)
 			)
 	});
+	logoutUser = asyncHandler((req, res) => {
+		res
+		.clearCookie("accessToken")
+		.clearCookie("refreshToken");
+	})
 }
 
 const UserController = new UserControl();
