@@ -50,7 +50,6 @@ class TodoSer {
 		if (!todos || todos.length === 0) {
 			throw new ApiError(404, "Empty todos");
 		}
-		console.log(todos);
 		return todos;
 	};
 }

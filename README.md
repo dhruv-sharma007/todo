@@ -1,2 +1,5 @@
-#This project is practice project or revision project of what i learned.
-- I used nodeJs and Express in backend
+# Backend Practice Project
+### Tech Stack
+- Backend -> **NodeJS** and **Express** 
+- Database -> **Mongodb**
+- Caching -> **Redis**
