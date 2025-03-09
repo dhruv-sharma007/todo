@@ -9,4 +9,5 @@ export const conf = {
     refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
     port: process.env.PORT,
     dbUri: process.env.MONGODB_URI,
+    redisUri: process.env.REDISURI,
 }

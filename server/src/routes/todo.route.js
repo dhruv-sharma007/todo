@@ -5,6 +5,7 @@ import { verifyAccessToken } from "../middlewares/userAuth.mid.js";
 
 const router = express.Router()
 
-router.post("/add-todo", TodoController.addTodo);
+router.post("/add-todo", verifyAccessToken, TodoController.addTodo);
+router.get("/get-todos", verifyAccessToken, TodoController.getTodos)
 
 export default router

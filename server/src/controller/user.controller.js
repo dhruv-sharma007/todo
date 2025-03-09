@@ -1,6 +1,6 @@
 import { UserAuth } from "../services/userService/userAuth.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import asyncHandler from "express-async-handler";
+import { asyncHandler } from "../utils/index.js";
 
 class UserControl {
 	constructor() {

@@ -1,9 +1,8 @@
-import { User } from "../../models/index.js";
+import User from "../../models/user.model.js";
 import { check } from "../../utils/index.js";
-import asyncHandler from "express-async-handler";
 
 class UserAuthentication {
-	getTokens = asyncHandler(async (userId) => {
+	getTokens = async (userId) => {
 		const user = await User.findById(userId);
 		check(!user, 404, "User not found");
 		const accessToken = user.generateAccessToken();
@@ -13,9 +12,9 @@ class UserAuthentication {
 		await user.save({ validateBeforeSave: false });
 
 		return { accessToken, refreshToken };
-	});
+	};
 
-	signupUser = asyncHandler(async (name, email, password) => {
+	signupUser = async (name, email, password) => {
 		check(!name || !email || !password, 400, "All field are required");
 		let existUser = await User.findOne({ email });
 
@@ -42,9 +41,9 @@ class UserAuthentication {
 		check(!createdUser, 404, "error while registering user");
 
 		return createdUser;
-	});
+	};
 
-	loginUser = asyncHandler(async (email, password) => {
+	loginUser = async (email, password) => {
 		check(!email || !password, 400, "All fields are required");
 
 		check(
@@ -66,7 +65,7 @@ class UserAuthentication {
 		);
 		const { accessToken, refreshToken } = await this.getTokens(user._id);
 		return { accessToken, refreshToken, loggedInUser };
-	});
+	};
 }
 
 const UserAuth = new UserAuthentication();

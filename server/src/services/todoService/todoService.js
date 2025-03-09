@@ -1,15 +1,15 @@
-import { Todo } from "../../models/index.js";
-import asyncHandler from "../../utils/AsyncHandler.js";
+import Todo from "../../models/todo.model.js";
 import ApiError from "../../utils/ApiError.js";
+import { getCache, setCache } from "../cache.js";
 
 class TodoSer {
-	addTodo = asyncHandler(async (Todo) => {
-		const { user, todo, status } = Todo;
+	addTodo = async (children) => {
+		const { user, todo, status } = children;
 
-		if (!user || !todo || !status) {
+		if (!user || !todo) {
 			throw new ApiError(400, "All Fields are required");
 		}
-		if ([user, todo, status].some((field) => field?.trim() == "")) {
+		if ([todo].some((field) => field?.trim() == "")) {
 			throw new ApiError(400, "All Fields are required");
 		}
 		const createdTodo = await Todo.create({
@@ -21,15 +21,38 @@ class TodoSer {
 		if (!createdTodo) {
 			throw new ApiError(500, "Error while creating Todo");
 		}
-		return true;
-	});
-	removeTodo = asyncHandler(async (todoId) => {
+		return createdTodo;
+	};
+	removeTodo = async (todoId) => {
 		const deletedTodo = await Todo.findByIdAndDelete(todoId);
 		if (!deletedTodo) {
 			throw new ApiError(404, "Todo not found");
 		}
 		return true;
-	});
+	};
+	getAllTodo = async (user) => {
+		if (!user) return null;
+
+		if (user === "") return null;
+		const cacheKey = `key${user}`;
+
+		let todos = await getCache(cacheKey);
+
+		if (!todos) {
+			todos = await Todo.aggregate([
+				{ $match: { user } },
+				{ $sort: { createdAt: -1 } },
+			]);
+			await setCache(cacheKey, todos, 3600)
+			return todos;
+		}
+
+		if (!todos || todos.length === 0) {
+			throw new ApiError(404, "Empty todos");
+		}
+		console.log(todos);
+		return todos;
+	};
 }
 
 export const TodoService = new TodoSer();
