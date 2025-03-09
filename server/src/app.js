@@ -9,7 +9,9 @@ app.use(cookieParser());
 
 //Routes
 import userRoute from "./routes/user.route.js";
+import todoRoute from "./routes/todo.route.js"
 
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/todo", todoRoute)
 
 export default app;

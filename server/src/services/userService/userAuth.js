@@ -67,7 +67,6 @@ class UserAuthentication {
 		const { accessToken, refreshToken } = await this.getTokens(user._id);
 		return { accessToken, refreshToken, loggedInUser };
 	});
-
 }
 
 const UserAuth = new UserAuthentication();

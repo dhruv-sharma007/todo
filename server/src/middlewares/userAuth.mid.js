@@ -9,11 +9,11 @@ const verifyAccessToken = async (req, res, next) => {
 
 		check(!accessToken, 400, "You are not authenticated");
 
-		const decodedToken = jwt.verify(conf.accessToken);
+		const decodedToken = await jwt.verify(accessToken, conf.accessToken);
 
 		check(!decodedToken, 400, "Access token not valid");
 
-		const user = User.findById(decodedToken._id).select(
+		const user = await User.findById(decodedToken._id).select(
 			" -password -refreshToken "
 		);
 
