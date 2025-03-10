@@ -16,17 +16,15 @@ class UserAuthentication {
 
 	signupUser = async (name, email, password) => {
 		check(!name || !email || !password, 400, "All field are required");
-		let existUser = await User.findOne({ email });
-
-		check(existUser, 400, "User already exist");
-
 		check(
-			[name, email, password].some((field) => {
-				field?.trim() == "";
-			}),
+			[name, email, password].some(field => field?.trim() === ""),
 			400,
 			"All fields are required"
 		);
+		let existUser = await User.findOne({ email });
+		console.log(existUser)
+		check(existUser, 400, "User already exist");
+
 
 		await User.create({
 			name,

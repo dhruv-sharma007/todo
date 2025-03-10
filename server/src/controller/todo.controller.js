@@ -27,23 +27,23 @@ class TodoControl {
 	});
 	removeTodo = asyncHandler(async (req, res) => {
 		const userId = req.user._id;
-		const todoId = req.params;
+		const { todoId } = req.params;
 
 		await TodoService.removeTodo(todoId, userId);
 
 		res.status(201).json(new ApiResponse(201, {}, "Todo Deleted successfully"));
 	});
-	updateTodo = asyncHandler(async (req, res) =>{
-		const { todoId } = req.body
+	updateTodo = asyncHandler(async (req, res) => {
+		const { todoId } = req.params;
+		const userId = req.user?._id;
+		const { todo, status } = req.body;
 
-		if (!todoId){
-			throw new ApiError(400, "TodoId is important for updating todo.")
+		if (!todoId) {
+			throw new ApiError(400, "TodoId is important for updating todo.");
 		}
-		const data = await TodoService.updateTodo(todoId)
+		const data = await TodoService.updateTodo(userId, todoId, todo, status);
 
-		res
-		.status(201)
-		.json(new ApiResponse(201, "Todo updated Successfully"))
-	})
+		res.status(201).json(new ApiResponse(201, {}, "Todo updated Successfully"));
+	});
 }
 export const TodoController = new TodoControl();

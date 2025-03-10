@@ -1,5 +1,5 @@
-import User from "../../models/user.model";
-import { ApiError } from "../../utils";
+import User from "../../models/user.model.js";
+import { ApiError } from "../../utils/index.js";
 
 class UserService {
 	nameChange = async (userId, newName) => {

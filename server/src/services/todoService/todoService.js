@@ -5,6 +5,11 @@ import { getCache, setCache, removeCache } from "../cache.js";
 class TodoSer {
 	addTodo = async (children) => {
 		const { user, todo, status } = children;
+		const existTodo = await Todo.findOne({ todo })
+		console.log(existTodo)
+		if(existTodo){
+			throw new ApiError(400, "Todo Already Exist")
+		}
 
 		if (!user || !todo) {
 			throw new ApiError(400, "All Fields are required");
@@ -24,13 +29,13 @@ class TodoSer {
 		return createdTodo;
 	};
 	removeTodo = async (todoId, userId) => {
-		if ([todoId, userId].some((field) => field.trim() === "")) {
+		if (!todoId || !userId) {
 			throw new ApiError(404, "todo and userId required");
 		}
 		const deletedTodo = await Todo.findByIdAndDelete(todoId);
 
 		if (!deletedTodo) {
-			false;
+			throw new ApiError(404, "Todo Not Found");
 		}
 		if (deletedTodo) {
 			const cacheKey = `key${userId}`;
@@ -64,11 +69,11 @@ class TodoSer {
 		return todos;
 	};
 	updateTodo = async (userId, todoId, todo, status) => {
-		if ([todoId, userId].some((field) => field.trim() === "")) {
-			throw new ApiError(404, "todo and userId required");
+		if ([todo, status].some((field) => field.trim() === "")) {
+			throw new ApiError(404, "All fields required");
 		}
 
-		if (!todo && !status) {
+		if (!todoId && !userId) {
 			throw new ApiError(400, "Atleast one field todo or status required");
 		}
 		let update = {};
