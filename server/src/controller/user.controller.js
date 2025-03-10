@@ -48,17 +48,25 @@ class UserControl {
 			.json(new ApiResponse(201, {}, "User logged out successfully"));
 	});
 	changeUserName = asyncHandler(async (req, res) => {
-		const { newName } =  req.body;
-		const userId = req.user?._id
+		const { newName } = req.body;
+		const userId = req.user?._id;
 
 		await UserService.nameChange(userId, newName);
 
 		res
+			.status(201)
+			.json(new ApiResponse(201, {}, "User name changed successfully"));
+	});
+	changePassword = asyncHandler(async (req, res) => {
+		const { newPassword, oldPassword } = req.body;
+		const userId = req.user?._id;
+
+		const data = await UserService.passwordChange(oldPassword, newPassword, userId);
+
+		res
 		.status(201)
-		.json(new ApiResponse(201, {}, "User name changed successfully"))
-
+		.json(new ApiResponse(201, data, "Password changed successfully"));
 	})
-
 }
 
 const UserController = new UserControl();
