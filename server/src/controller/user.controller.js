@@ -1,6 +1,7 @@
 import { UserAuth } from "../services/userService/userAuth.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/index.js";
+import UserService from "../services/userService/userProfile.js";
 
 class UserControl {
 	constructor() {
@@ -46,6 +47,18 @@ class UserControl {
 			.status(201)
 			.json(new ApiResponse(201, {}, "User logged out successfully"));
 	});
+	changeUserName = asyncHandler(async (req, res) => {
+		const { newName } =  req.body;
+		const userId = req.user?._id
+
+		await UserService.nameChange(userId, newName);
+
+		res
+		.status(201)
+		.json(new ApiResponse(201, {}, "User name changed successfully"))
+
+	})
+
 }
 
 const UserController = new UserControl();

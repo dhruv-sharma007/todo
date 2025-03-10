@@ -1,6 +1,6 @@
 import Todo from "../../models/todo.model.js";
 import ApiError from "../../utils/ApiError.js";
-import { getCache, setCache } from "../cache.js";
+import { getCache, setCache, removeCache } from "../cache.js";
 
 class TodoSer {
 	addTodo = async (children) => {
@@ -23,10 +23,21 @@ class TodoSer {
 		}
 		return createdTodo;
 	};
-	removeTodo = async (todoId) => {
+	removeTodo = async (todoId, userId) => {
+		if ([todoId, userId].some((field) => field.trim() === "")) {
+			throw new ApiError(404, "todo and userId required");
+		}
 		const deletedTodo = await Todo.findByIdAndDelete(todoId);
+
 		if (!deletedTodo) {
-			throw new ApiError(404, "Todo not found");
+			false;
+		}
+		if (deletedTodo) {
+			const cacheKey = `key${userId}`;
+			const findCache = await getCache(cacheKey);
+			if (findCache) {
+				await removeCache(cacheKey);
+			}
 		}
 		return true;
 	};
@@ -43,7 +54,7 @@ class TodoSer {
 				{ $match: { user } },
 				{ $sort: { createdAt: -1 } },
 			]);
-			await setCache(cacheKey, todos, 3600)
+			await setCache(cacheKey, todos, 3600);
 			return todos;
 		}
 
@@ -51,6 +62,26 @@ class TodoSer {
 			throw new ApiError(404, "Empty todos");
 		}
 		return todos;
+	};
+	updateTodo = async (userId, todoId, todo, status) => {
+		if ([todoId, userId].some((field) => field.trim() === "")) {
+			throw new ApiError(404, "todo and userId required");
+		}
+
+		if (!todo && !status) {
+			throw new ApiError(400, "Atleast one field todo or status required");
+		}
+		let update = {};
+		if (todo) update.todo = todo;
+		if (status) update.status = status;
+		const updateTodo = await Todo.findByIdAndUpdate(todoId, update, {
+			new: true,
+		});
+
+		if (!updateTodo) {
+			throw new ApiError(404, "Todo Not Found");
+		}
+		return updateTodo;
 	};
 }
 

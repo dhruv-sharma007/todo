@@ -2,7 +2,12 @@ import redisClient from "../conf/redisClient.js"
 import asyncHandler from "../utils/AsyncHandler.js";
 
 const setCache = asyncHandler( async(key, value, expireTime)=>{
-    await redisClient.set(key, JSON.stringify(value), { EX: expireTime })
+    try{
+
+        await redisClient.set(key, JSON.stringify(value), { EX: expireTime })
+    } catch(err){
+        console.error("Error while setting cache :", err)
+    }
 }) 
 
 const getCache = async (key) =>{
@@ -11,14 +16,28 @@ const getCache = async (key) =>{
         if(data){
             return JSON.parse(data);
         }
-        return null;
+        return false;
     } catch(err){
-        console.error("Error while getting cahe :", err)
-        return null;
+        console.error("Error while getting cache :", err)
+        return false;
+    }
+}
+
+const removeCache = async (key) =>{
+    try{
+        const data = getCache(key);
+        if(data){
+            redisClient.del(key);
+            return true;
+        };
+        return false;
+    }catch(err){
+        console.error("Error while deleting cache :", err)
     }
 }
 
 export {
     setCache,
-    getCache
+    getCache,
+    removeCache
 }
